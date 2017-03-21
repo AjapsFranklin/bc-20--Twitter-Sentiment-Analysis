@@ -16,5 +16,9 @@
   "bugs": {
     "url": "https://github.com/framky007/bc-20--Twitter-Sentiment-Analysis/issues"
   },
-  "homepage": "https://github.com/framky007/bc-20--Twitter-Sentiment-Analysis#readme"
+  "homepage": "https://github.com/framky007/bc-20--Twitter-Sentiment-Analysis#readme",
+  "dependencies": {
+    "readline-sync": "^1.4.7",
+    "twit": "^2.2.5"
+  }
 }
