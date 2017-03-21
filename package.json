@@ -1,0 +1,20 @@
+{
+  "name": "twitter-sentiment-analyser",
+  "version": "1.0.0",
+  "description": "A twitter sentient analyser console App",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "testSuites.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/framky007/bc-20--Twitter-Sentiment-Analysis.git"
+  },
+  "author": "Ajaps Franklin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/framky007/bc-20--Twitter-Sentiment-Analysis/issues"
+  },
+  "homepage": "https://github.com/framky007/bc-20--Twitter-Sentiment-Analysis#readme"
+}
