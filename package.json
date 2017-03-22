@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/framky007/bc-20--Twitter-Sentiment-Analysis#readme",
   "dependencies": {
+    "fs": "0.0.1-security",
+    "progress": "^1.1.8",
+    "progressbar": "^1.1.1",
     "readline-sync": "^1.4.7",
     "twit": "^2.2.5"
   }
