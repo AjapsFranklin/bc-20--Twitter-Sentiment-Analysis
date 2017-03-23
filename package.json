@@ -1,7 +1,7 @@
 {
   "name": "twitter-sentiment-analyser",
   "version": "1.0.0",
-  "description": "A twitter sentient analyser console App",
+  "description": "A twitter sentiment analyser console App",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -22,6 +22,7 @@
     "progress": "^1.1.8",
     "progressbar": "^1.1.1",
     "readline-sync": "^1.4.7",
-    "twit": "^2.2.5"
+    "twit": "^2.2.5",
+    "watson-developer-cloud": "^2.27.1"
   }
 }

@@ -17,6 +17,8 @@ var userID = process.argv[2]; //Stores 2nd element passed in the command line
 var startDate = process.argv[3];
 var meData;
 var getDate = false;
+textJson = {};
+var arrayTweet="";
 
 if(startDate=='undefinded')
     getDate=checkDateFormat(startDate);
@@ -35,15 +37,15 @@ while(getDate==false && (startDate!='y'|| startDate!='y')){
 
 //to Check validity of date provided
 function checkDateFormat(startDate){
-    if(typeof(startDate)!='undefinded'){
-        console.log("\n Invalid date format!  valid Date format 2001-11-23 or 'Y' to continue\n" );
+    if(typeof(startDate)=='undefinded'){
+        console.log("\n Invalid date format!  valid Date format 2001-11-23 (YYYY-MM-DD)  or 'Y' to continue\n" );
         return false;
     
     }
-        else if(startDate.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) || startDate.toLowerCase()==="y")
-            return true;
+    if(startDate.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) || startDate.toLowerCase()==="y")
+        return true;
 
-            else{
+        else{
                 console.log("\n No input detected! 'Y' to fetch tweets without startDate\n" );
                 return false;
             }
@@ -90,17 +92,10 @@ function getTweets(userID){
     var yep;
         myTweets.get('search/tweets', userDefined, callback)
         function callback(err, data, response) {
-            
-            extractData(data, userID);
-            
-            
-            //Write output to file
-        fs.writeFile("output.json", JSON.stringify(data), function(err){
             if(err)
-                return console.error(err);
-        });
-        
-
+                console.log("Could not connect to twitter service at the moment, check your internet connection and try again");            
+            else
+                extractData(data, userID);
         }
 }
 
@@ -113,12 +108,17 @@ function getTweets(userID){
             return console.log("\nCould not get Tweets, make sure you're connected to the Internet \n");
             else{
                 tweetData = tweetData.statuses;
-                var arrayTweet="";
                 //Filter tweets and store in a list
                 for(i=0; i<tweetData.length; i++){
                     if(!(tweetData[i].text.match(RegExp(userID,'gi'))))
-                        arrayTweet+=" \n "+tweetData[i].text.toLowerCase();
+                        arrayTweet+=tweetData[i].text.toLowerCase() + " \n ";
+                        textJson["text"+i] = tweetData[i].text;
                 }
+                    //Write output to file
+        fs.writeFile("output.json", JSON.stringify(textJson), function(err){
+            if(err)
+                return console.error(err);
+        });
                 wordFrequecy(arrayTweet);
                 return arrayTweet; 
         }
@@ -129,7 +129,9 @@ function wordFrequecy(data){
     //progress.setTick(95)
     countArray=[];
     var objFreq={};
+    data = data.replace(/,/," ");
     data = data.replace(/^\\D/," ");
+    //console.log(data);
     var obj = stopWords["stopWords"];
         for(i=0; i<obj.length; i++)
         {
@@ -138,7 +140,7 @@ function wordFrequecy(data){
             data= data.replace(rExp, " ");
         }
 
-        //Filter no word characters in the Tweets
+        //Filter non word characters in the Tweets
         var temp1=[];
         temp1 = data.split(" ");
         for(i=0; i<temp1.length; i++){
@@ -187,5 +189,23 @@ function wordFrequecy(data){
                     }
                 }
 
+
+                //Analysing Tweet sentiments using Alchemy API
+                var AlchemyLanguageV1 = require('watson-developer-cloud/alchemy-language/v1'); 
+                var alchemy_language = new AlchemyLanguageV1({api_key: 'accf81f1ef3420c935d3e3eddcf10882b55113d8'});
+
+                var params = {text: arrayTweet};
+                
+                alchemy_language.sentiment(params, function (err, response) {
+                if (err)
+                    console.log('error:', err);
+                else{
+                    var info = JSON.stringify(response, null, 3);
+                }
+
+                console.log(info);
+                    //console.log(info.status);
+                    //console.log(JSON.stringify(response, null, 2));
+                });
             }
 }
