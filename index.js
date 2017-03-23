@@ -3,6 +3,7 @@ var tweets = require('twit');
 var configFile = require('./twitter-config');
 var fs = require('fs');
 var stopWords = require('./stopWords');
+var colors = require('colors');
 //var storeTweet = require('./output');
 
 //Progress bar Module
@@ -37,16 +38,15 @@ while(getDate==false && (startDate!='y'|| startDate!='y')){
 
 //to Check validity of date provided
 function checkDateFormat(startDate){
-    if(typeof(startDate)=='undefinded'){
+    if(typeof(startDate)=='undefined'){
         console.log("\n Invalid date format!  valid Date format 2001-11-23 (YYYY-MM-DD)  or 'Y' to continue\n" );
-        return false;
-    
+        return false;    
     }
-    if(startDate.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) || startDate.toLowerCase()==="y")
+    else if(startDate.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) || startDate.toLowerCase()==="y")
         return true;
 
         else{
-                console.log("\n No input detected! 'Y' to fetch tweets without startDate\n" );
+                console.log("\n Start time not detected!  valid Date format 2001-11-23 (YYYY-MM-DD) or 'Y' to ignore\n" );
                 return false;
             }
 }
@@ -54,14 +54,16 @@ function checkDateFormat(startDate){
 
 if(userID[0]=="@")//Removes '@' if present
     userID=userID.substring(1,userID.length)
-
-console.log("\nGetting tweets from "+"@"+userID+" starting from "+ startDate+"\n");
+if (startDate == 'y')
+console.log("\nGetting tweets from "+"@"+userID+"\n");
+else
+console.log("\nGetting tweets from "+"@"+userID+" starting at "+ startDate+"\n");
 
 //Call function to validate UserID
 if (checkUserID(userID) ===true)
 {
     if (getDate && startDate.toLowerCase()!='y'){
-        userDefined['q'] = userID + "since:"+startDate;
+        userDefined['q'] = userID + " since:"+startDate;
     }
     else
         userDefined['q'] = userID;
@@ -87,7 +89,7 @@ function checkUserID(userID){
 
 //GET Tweets
 function getTweets(userID){
-    //progress.setTick(20)
+    progress.setTick(20)
     var myTweets = new tweets(configFile)
     var yep;
         myTweets.get('search/tweets', userDefined, callback)
@@ -200,10 +202,11 @@ function wordFrequecy(data){
                 if (err)
                     console.log('error:', err);
                 else{
-                    var info = JSON.stringify(response, null, 3);
+                    var info = response.docSentiment.type;
+                    console.log("\n@"+ userID + "  Sentiment from tweets is: " + info.toUpperCase());
                 }
 
-                console.log(info);
+                
                     //console.log(info.status);
                     //console.log(JSON.stringify(response, null, 2));
                 });
