@@ -5,39 +5,68 @@ var fs = require('fs');
 var stopWords = require('./stopWords');
 //var storeTweet = require('./output');
 
+//Progress bar Module
 const progress = require('progressbar').create();
 progress.setTotal(100);
 
+//User defined criteria for fetching tweets
+userDefined = { q: "andelaframky007", count: 100 };
 
 //To get input from the command Line
 var userID = process.argv[2]; //Stores 2nd element passed in the command line
+var startDate = process.argv[3];
 var meData;
-if(typeof(userID)==="undefined"){
-    userID = readLineSync.question("UserID:   ");//get UserID if it wasn't passed
+var getDate = false;
+
+if(startDate=='undefinded')
+    getDate=checkDateFormat(startDate);
+    else
+        getDate = checkDateFormat(startDate);
+
+//get UserID if it wasn't passed
+while(typeof(userID)==="undefined")
+    userID = readLineSync.question("UserID:   ");
+
+//get UserID if it wasn't passed
+while(getDate==false && (startDate!='y'|| startDate!='y')){
+    startDate = readLineSync.question("startTime:   ");
+    getDate = checkDateFormat(startDate);
+}
+
+//to Check validity of date provided
+function checkDateFormat(startDate){
+    if(typeof(startDate)!='undefinded'){
+        console.log("\n Invalid date format!  valid Date format 2001-11-23 or 'Y' to continue\n" );
+        return false;
+    
+    }
+        else if(startDate.match(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/) || startDate.toLowerCase()==="y")
+            return true;
+
+            else{
+                console.log("\n No input detected! 'Y' to fetch tweets without startDate\n" );
+                return false;
+            }
 }
 
 
 if(userID[0]=="@")//Removes '@' if present
     userID=userID.substring(1,userID.length)
 
-console.log("\nGetting tweets from "+"@"+userID+"\n");
+console.log("\nGetting tweets from "+"@"+userID+" starting from "+ startDate+"\n");
+
 //Call function to validate UserID
 if (checkUserID(userID) ===true)
 {
-    progress.step('1').setTick(10)
+    if (getDate && startDate.toLowerCase()!='y'){
+        userDefined['q'] = userID + "since:"+startDate;
+    }
+    else
+        userDefined['q'] = userID;
+
+    progress.step('1').setTick(10); //progressBar timer
     getTweets(userID);
-    progress.step('2').setTick(40)
-    //var tweetObj =extractData();
-/*
-    if(tweetObj==false || tweetObj==="undefined"){
-        console.log("\nCould not get Tweets for the specified User\n")
-    }
-    else{
-        progress.step('3').setTick(70);
-        wordFrequecy(tweetObj);
-        progress.step('4').setTick(90)
-    }
-    */
+    progress.step('2').setTick(40);
 }
 
 
@@ -59,57 +88,26 @@ function getTweets(userID){
     //progress.setTick(20)
     var myTweets = new tweets(configFile)
     var yep;
-    /*
-    myTweets.get('search/tweets', { q: userID, count: 100 }, function(err, data, response) {
-        progress.setTick(70)
-        var meData = data.toString();
-        */
-        userDefined = { q: userID, count: 1000 };
-        //q: 'banana since:2011-07-11'
-
-        //myTweets.get('search/tweets', userDefined, callback)
         myTweets.get('search/tweets', userDefined, callback)
         function callback(err, data, response) {
-            extractData(data, userID);
-            //console.log(data)
             
-            /*
+            extractData(data, userID);
+            
+            
             //Write output to file
         fs.writeFile("output.json", JSON.stringify(data), function(err){
             if(err)
                 return console.error(err);
-            //console.log(err);
         });
-        */
+        
 
         }
-
-        //data(meData);
-        //extractData(data, userID);
-        
-        
-        /*
-        //Write output to file
-        fs.writeFile("output.json", convData, function(err){
-            if(err)
-                return console.error(err);
-            //extractData(data);
-            console.log("File was written successfully");
-            console.log(err);
-        });
-        */
-   // });
 }
 
 
 //Extract data from output json file
-//function extractData(rawData, userID){
     function extractData(data, userID){
         var tweetData = data
-    //progress.setTick(90)
-        //var tweetData = fs.readFileSync('output.json');
-        //tweetData = JSON.parse(tweetData);
-        //console.log(typeof(tweetData));
         
         if(tweetData==="")
             return console.log("\nCould not get Tweets, make sure you're connected to the Internet \n");
@@ -119,14 +117,14 @@ function getTweets(userID){
                 //Filter tweets and store in a list
                 for(i=0; i<tweetData.length; i++){
                     if(!(tweetData[i].text.match(RegExp(userID,'gi'))))
-                        arrayTweet+=" \n "+tweetData[i].text.toLowerCase();  //convert tweet to lowercCase
+                        arrayTweet+=" \n "+tweetData[i].text.toLowerCase();
                 }
                 wordFrequecy(arrayTweet);
                 return arrayTweet; 
         }
     }
 
-//Function to sort words according to their Frequency
+//Sort words according to their Frequency
 function wordFrequecy(data){
     //progress.setTick(95)
     countArray=[];
@@ -140,11 +138,13 @@ function wordFrequecy(data){
             data= data.replace(rExp, " ");
         }
 
-
+        //Filter no word characters in the Tweets
         var temp1=[];
         temp1 = data.split(" ");
         for(i=0; i<temp1.length; i++){
             count =0;
+            if(temp1[i].match(/^\d/)) //Exclude white spaces
+                continue;
             if(temp1[i].match(/\W/)) //Exclude white spaces
                 continue;
             if(temp1[i]=='')  //Exclude empty String
@@ -156,8 +156,7 @@ function wordFrequecy(data){
                     count++;
             }
             if(count in objFreq){// if key exists in array
-                var temp = objFreq[String(count)]; 
-                console.log(temp1[i]);
+                var temp = objFreq[String(count)];
                 var reg = RegExp(temp1[i].toString(), 'g');
                 if(!(temp.match(reg)))
                 objFreq[String(count)] = temp + ","+temp1[i];
@@ -168,17 +167,25 @@ function wordFrequecy(data){
             }
         }
 
-        //Get Top 10 words
-        /*
-        countArray.sort(function(a,b){return b-a});
-        var tenWords = {};
-        while(i<countArray.length && tenWords.length<10)
-        */
-
-
+        
+        //OUTPUT result to console
         if(data=="")
             console.log("\nCould not find tweets with  @" + userID+"  userID\n")
-            else
-                console.log(objFreq);  
+            else{
+                //Print Top 10 words from the key:value Array
+                countArray.sort(function(a,b){return b-a});
+                var tenWords = {};
+                var countWords = 0;
+
+                for(i=0; i<countArray.length; i++){
+                    if(countWords>9) break;
+                    var spltWords = objFreq[countArray[i]].split(",");
+                    for(j=0; j<spltWords.length; j++){
+                        console.log(spltWords[j] +" : " + countArray[i]);
+                        countWords++
+                        if(countWords>9)break;
+                    }
+                }
+
+            }
 }
-//console.log(meData);
