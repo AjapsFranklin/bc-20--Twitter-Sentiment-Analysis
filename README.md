@@ -1,4 +1,4 @@
-# bc-20--Twitter-Sentiment-Analyser
+# Twitter-Sentiment-Analyser
 
 ## Overview
 An app to fetch tweets and analyse them base on the frequency of Word occurrence and mood using Alchemy API  
