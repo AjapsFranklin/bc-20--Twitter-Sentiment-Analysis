@@ -39,7 +39,7 @@ An app to fetch tweets and analyse them base on the frequency of Word occurrence
   *  `./node_modules/
 
 * Run the app
-  *  `node index.js UserID
+  *   node index.js UserID
   *   you will be prompted to input Start Time
   *   where UserID - Twitter User ID and 
   *   StartTime - YYYY-MM-DD *
@@ -51,3 +51,7 @@ An app to fetch tweets and analyse them base on the frequency of Word occurrence
   USERID:
   Start Time:
   ```
+ ## Limitations
+ *  Twitter API limits number of tweets fetched to 100 
+ *  The start Date must be in a particular format
+
