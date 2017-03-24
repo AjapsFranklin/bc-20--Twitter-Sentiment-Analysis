@@ -18,13 +18,16 @@ function checkDateFormat(startDate){
 function checkUserID(userID){
   AcceptedChar = "^[a-zA-Z0-9\s_]+$";
   if(userID === null){
-    return console.log("\n invalid input \n".bold.red);
+    console.log("\n invalid input \n".bold.red);
+    return false;
   }
   else if(userID.length>15){
-    return console.log("\n UserID cannot be more than 15 characters \n".bold.red);
+    console.log("\n UserID cannot be more than 15 characters \n".bold.red);
+    return false;
   }
   else if(!(userID.match("^[a-zA-Z0-9\s_]+$"))){
-    return console.log("\n UserID should be composed only of A-Z, 0-9 and _(underscore) \n".bold.red);
+    console.log("\n UserID should be composed only of A-Z, 0-9 and _(underscore) \n".bold.red);
+    return false
   }
   else{
     return true;
