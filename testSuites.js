@@ -40,4 +40,45 @@
 
     });
   });
+
+describe("Check UserID validity ", function() {
+    describe("Case for wrong user ID", function() {
+
+      it("should return 'false' for null", function() {
+        expect(myApp.checkUserID(null)).toBe(false);
+      });
+
+      it("should return 'false' if input is an empty string ", function() {
+        expect(myApp.checkUserID("   ")).toBe(false);
+      });
+
+      it("should return 'false' for words greater than 15'andelabootcampfranklin' ", function() {
+        expect(myApp.checkUserID("andelabootcampfranklin")).toBe(false);
+      });
+
+      it("should return 'false' for words with special characters'-tunde' ", function() {
+        expect(myApp.checkUserID("-tunde")).toBe(false);
+      });
+
+      it("should return 'false' for words with special characters '@tunde' ", function() {
+        expect(myApp.checkUserID("@tunde")).toBe(false);
+      });
+
+      it("should return 'false' for words with special characters 'tunde%abiola' ", function() {
+        expect(myApp.checkUserID("tunde%abiola")).toBe(false);
+      });
+    });
+
+    describe("Case for valid UserID", function() {
+
+      it("should return 'true' for 'tunde'", function() {
+        expect(myApp.checkUserID('tunde')).toBe(true);
+      });
+
+      it("should return true for `realdonaldtrump`", function() {
+        expect(myApp.checkUserID('realdonaldtrump')).toBe(true);
+      });
+
+    });
+  });
 })();
