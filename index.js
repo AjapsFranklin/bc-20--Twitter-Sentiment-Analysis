@@ -23,12 +23,14 @@ var arrayTweet="";
 
 //get UserID if it wasn't passed
 while(typeof(userID)==="undefined" || !library.checkUserID(userID)){
+  console.log('\n');
   userID = readLineSync.question("UserID:   ");
 }
 
 
 //get StartTime
 while(getDate==false){
+  console.log('\n');
   startDate = readLineSync.question("startTime:   ");
   getDate = library.checkDateFormat(startDate);
 }
@@ -36,7 +38,7 @@ while(getDate==false){
 //Call function to validate UserID
 if (library.checkUserID(userID) ===true)
 {
-  if (getDate && startDate.toLowerCase()!='y'){
+  if (startDate.length>4){
     userDefined['q'] = userID + " since:"+startDate;
   }
   else{
@@ -138,7 +140,12 @@ function wordFrequecy(data){
 
 //OUTPUT result to console
   if(data==""){
-    console.log(colors.bold.red("\nCould not find tweets with  @" + userID+"  userID\n"));
+    if(startDate.length>4){
+      console.log(colors.bold.red("\nCould not find tweets from StartTme: "+ startDate +" by  @" + userID+"\n"));
+    }
+    else{
+      console.log(colors.bold.red("\nCould not find tweets by  @" + userID+"  userID\n"));
+    }
   }
   else{
     countArray.sort(function(a,b){return b-a});
@@ -166,8 +173,8 @@ function wordFrequecy(data){
         console.log('error:', err);
       }
       else{
-        var info = response.docSentiment.type;
-        console.log("\n@"+ userID + " average sentiment from tweets is: " + colors.yellow(info.toUpperCase()+"\n"));
+        var sentimentInfo = response.docSentiment.type;
+        console.log("\n@"+ userID + " average sentiment from tweets is: " + colors.blue(sentimentInfo.toUpperCase()+"\n"));
       }
     });
   }
