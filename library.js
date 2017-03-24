@@ -9,7 +9,7 @@ function checkDateFormat(startDate){
     return true;
   }
   else{
-    console.log("\n Invalid Date format 2001-11-23 (YYYY-MM-DD) or hit ENTER to ignore\n".bold.red );
+    console.log("\n INVALID DATE FORMAT!  Date Format should be: 2001-11-23 (YYYY-MM-DD) or hit ENTER to ignore\n".bold.red );
     return false;
   }
 }
@@ -24,7 +24,7 @@ function checkUserID(userID){
     return console.log("\n UserID cannot be more than 15 characters \n".bold.red);
   }
   else if(!(userID.match("^[a-zA-Z0-9\s_]+$"))){
-    return console.log("\n UserID should only be composed of A-Z, 0-9 and _(underscore) \n".bold.red);
+    return console.log("\n UserID should be composed only of A-Z, 0-9 and _(underscore) \n".bold.red);
   }
   else{
     return true;
